@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-green: #16a34a;
+  --brand-green-light: #22c55e;
+  --brand-green-dark: #15803d;
+  --surface: #f8fafc;
+  --surface-card: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  max-width: 480px;
+  margin: 0 auto;
+  background-color: var(--surface);
+  min-height: 100dvh;
+  overscroll-behavior: none;
+}
+
+/* Prevent text selection on UI elements */
+button, label {
+  user-select: none;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 2px;
+}
+
+/* Safe area for bottom navigation */
+.pb-safe {
+  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Status badge utilities */
+.badge-pending {
+  @apply bg-red-100 text-red-700 border border-red-200;
+}
+.badge-purchased {
+  @apply bg-green-100 text-green-700 border border-green-200;
+}
+
+/* Card animation */
+.card-hover {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.card-hover:active {
+  transform: scale(0.98);
+}
+
+/* FAB animation */
+.fab {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.fab:active {
+  transform: scale(0.94);
+}
+
+/* Skeleton loading */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.skeleton {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  @apply bg-slate-200 rounded;
+}

@@ -1,0 +1,133 @@
+{
+  "users": [
+    {
+      "id": "u1000000-0000-0000-0000-000000000001",
+      "name": "Andi Pratama",
+      "email": "andi@na-petcare.com",
+      "role": "na"
+    },
+    {
+      "id": "u1000000-0000-0000-0000-000000000002",
+      "name": "Siti Rahayu",
+      "email": "siti@na-petcare.com",
+      "role": "na"
+    }
+  ],
+  "branches": [
+    {
+      "id": "b1000000-0000-0000-0000-000000000001",
+      "name": "Cabang Jakarta Selatan",
+      "location": "Jl. Fatmawati No. 10"
+    },
+    {
+      "id": "b1000000-0000-0000-0000-000000000002",
+      "name": "Cabang Serpong BSD",
+      "location": "Ruko BSD City Blok A No. 5"
+    },
+    {
+      "id": "b1000000-0000-0000-0000-000000000003",
+      "name": "Cabang Depok",
+      "location": "Jl. Margonda Raya No. 88"
+    }
+  ],
+  "user_branches": [
+    {
+      "user_id": "u1000000-0000-0000-0000-000000000001",
+      "branch_id": "b1000000-0000-0000-0000-000000000001"
+    },
+    {
+      "user_id": "u1000000-0000-0000-0000-000000000001",
+      "branch_id": "b1000000-0000-0000-0000-000000000002"
+    },
+    {
+      "user_id": "u1000000-0000-0000-0000-000000000002",
+      "branch_id": "b1000000-0000-0000-0000-000000000002"
+    },
+    {
+      "user_id": "u1000000-0000-0000-0000-000000000002",
+      "branch_id": "b1000000-0000-0000-0000-000000000003"
+    }
+  ],
+  "products": [
+    {
+      "id": "p1",
+      "sku": "RC-RENAL-2KG",
+      "name": "Royal Canin Renal 2kg",
+      "category": "Royal Canin - Kucing",
+      "base_price": 425000
+    },
+    {
+      "id": "p2",
+      "sku": "RC-KITTEN-2KG",
+      "name": "Royal Canin Kitten 2kg",
+      "category": "Royal Canin - Kucing",
+      "base_price": 235000
+    },
+    {
+      "id": "p3",
+      "sku": "RC-PERSIAN-2KG",
+      "name": "Royal Canin Persian Adult 2kg",
+      "category": "Royal Canin - Kucing",
+      "base_price": 260000
+    },
+    {
+      "id": "p4",
+      "sku": "RC-MINI-ADULT-2KG",
+      "name": "Royal Canin Mini Adult 2kg",
+      "category": "Royal Canin - Anjing",
+      "base_price": 195000
+    },
+    {
+      "id": "p5",
+      "sku": "HS-CAT-ADULT-1.6",
+      "name": "Hills Science Diet Adult Cat 1.6kg",
+      "category": "Hills - Kucing",
+      "base_price": 280000
+    },
+    {
+      "id": "p6",
+      "sku": "PP-DOG-ADULT-3KG",
+      "name": "Purina Pro Plan Dog Adult 3kg",
+      "category": "Purina - Anjing",
+      "base_price": 295000
+    }
+  ],
+  "price_overrides": [],
+  "education_sessions": [
+    {
+      "id": "s-1780802527248",
+      "advisor_id": "u1000000-0000-0000-0000-000000000001",
+      "branch_id": "b1000000-0000-0000-0000-000000000001",
+      "client_name": "Budi santoso",
+      "client_wa": "0897635343836",
+      "pet_type": "Kucing",
+      "created_at": "2026-06-07T03:22:07.248Z"
+    }
+  ],
+  "education_items": [
+    {
+      "id": "i-1780802527249-0",
+      "session_id": "s-1780802527248",
+      "product_id": "p6",
+      "purchase_status": "purchased",
+      "actual_price": 50000,
+      "updated_at": "2026-06-07T03:22:31.937Z"
+    }
+  ],
+  "kpi_targets": [
+    {
+      "id": "k1",
+      "advisor_id": "u1000000-0000-0000-0000-000000000001",
+      "month": "2026-06",
+      "edu_target": 30,
+      "sales_target": 5000000
+    },
+    {
+      "id": "k2",
+      "advisor_id": "u1000000-0000-0000-0000-000000000002",
+      "month": "2026-06",
+      "edu_target": 25,
+      "sales_target": 4000000
+    }
+  ]
+}
