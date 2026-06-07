@@ -115,7 +115,7 @@ export function EducationModal({ advisorId, onClose, onSuccess }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center">
+    <div className="fixed inset-0 z-[60] flex items-end justify-center">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
@@ -141,7 +141,7 @@ export function EducationModal({ advisorId, onClose, onSuccess }: Props) {
         </div>
 
         {/* Form */}
-        <div className="overflow-y-auto flex-1 px-5 pb-6">
+        <div className="overflow-y-auto flex-1 px-5 pb-16">
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="w-6 h-6 animate-spin text-green-500" />

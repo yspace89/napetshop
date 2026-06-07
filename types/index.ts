@@ -41,6 +41,9 @@ export interface EducationSession {
   client_wa: string
   pet_type: 'Kucing' | 'Anjing'
   created_at: string
+  photo?: string
+  photo_location?: string
+  photo_timestamp?: string
   branch?: Branch
   items?: EducationItem[]
 }

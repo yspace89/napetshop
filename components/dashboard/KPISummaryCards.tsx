@@ -42,7 +42,7 @@ export function KPISummaryCards({ summary, loading }: Props) {
         </div>
         <div className="mb-2">
           <span className="text-2xl font-bold text-slate-800">{summary?.edu_count ?? 0}</span>
-          <span className="text-sm text-slate-400 ml-1">/ {summary?.edu_target ?? 0}</span>
+          <span className="text-sm text-slate-400 ml-1">/ {summary?.edu_target ?? 0} Pcs</span>
         </div>
         {/* Progress bar */}
         <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">

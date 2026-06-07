@@ -1,9 +1,10 @@
 'use client'
 
+import { useState, useRef } from 'react'
 import { EducationSession, EducationItem } from '@/types'
 import { formatDateTime, formatRupiah, formatWA } from '@/lib/utils'
 import { useAppStore } from '@/store/useAppStore'
-import { Cat, Dog, Phone, MapPin, ShoppingCart, CheckCircle2, Clock } from 'lucide-react'
+import { Cat, Dog, Phone, MapPin, ShoppingCart, CheckCircle2, Clock, Camera, Calendar, Loader2 } from 'lucide-react'
 
 interface Props {
   session: EducationSession
@@ -13,6 +14,120 @@ interface Props {
 export function EducationCard({ session, onStatusChange }: Props) {
   const { openToggleModal } = useAppStore()
   const PetIcon = session.pet_type === 'Kucing' ? Cat : Dog
+
+  const [uploading, setUploading] = useState(false)
+  const [error, setError] = useState('')
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  function handleUploadClick() {
+    fileInputRef.current?.click()
+  }
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploading(true)
+    setError('')
+
+    // Get time label
+    const now = new Date()
+    const timeLabel = now.toLocaleString('id-ID', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+
+    // Get location/GPS coordinates
+    let locationLabel = session.branch?.name || 'Cabang'
+    try {
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 5000
+        })
+      })
+      const { latitude, longitude } = position.coords
+      locationLabel = `${locationLabel} (GPS: ${latitude.toFixed(5)}, ${longitude.toFixed(5)})`
+    } catch (err) {
+      console.warn('Geolocation failed', err)
+      locationLabel = `${locationLabel} (GPS tidak terdeteksi)`
+    }
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const img = new Image()
+      img.onload = async () => {
+        try {
+          const canvas = document.createElement('canvas')
+          const ctx = canvas.getContext('2d')
+          if (!ctx) throw new Error('Gagal memuat canvas')
+
+          // Scale down image if it's too large (max 1024px width or height)
+          const maxDim = 1024
+          let w = img.width
+          let h = img.height
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = Math.round((h * maxDim) / w)
+              w = maxDim
+            } else {
+              w = Math.round((w * maxDim) / h)
+              h = maxDim
+            }
+          }
+          canvas.width = w
+          canvas.height = h
+
+          // Draw original image
+          ctx.drawImage(img, 0, 0, w, h)
+
+          // Add semi-transparent banner at the bottom
+          const bannerHeight = Math.round(h * 0.16)
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.65)'
+          ctx.fillRect(0, h - bannerHeight, w, bannerHeight)
+
+          // Draw Text
+          ctx.fillStyle = '#ffffff'
+          const fontSize = Math.max(14, Math.round(w * 0.026))
+          ctx.font = `bold ${fontSize}px sans-serif`
+
+          const textLocation = `📍 ${locationLabel}`
+          const textTime = `⏰ ${timeLabel}`
+
+          ctx.fillText(textLocation, Math.round(w * 0.03), h - Math.round(bannerHeight * 0.6))
+          ctx.fillText(textTime, Math.round(w * 0.03), h - Math.round(bannerHeight * 0.25))
+
+          const base64Image = canvas.toDataURL('image/jpeg', 0.8)
+
+          // Upload via API
+          const res = await fetch('/api/education/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              sessionId: session.id,
+              photo: base64Image,
+              location: locationLabel,
+              timestamp: now.toISOString()
+            })
+          })
+
+          if (!res.ok) throw new Error('Gagal mengunggah foto ke database')
+
+          onStatusChange()
+        } catch (err: any) {
+          setError(err.message || 'Gagal memproses foto')
+        } finally {
+          setUploading(false)
+        }
+      }
+      img.src = event.target?.result as string
+    }
+    reader.readAsDataURL(file)
+  }
 
   return (
     <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden card-hover">
@@ -47,7 +162,7 @@ export function EducationCard({ session, onStatusChange }: Props) {
       <div className="h-px bg-slate-50 mx-4" />
 
       {/* Items */}
-      <div className="px-4 pb-4 pt-3 space-y-2">
+      <div className="px-4 pb-3 pt-3 space-y-2">
         <div className="flex items-center gap-1.5 mb-2">
           <ShoppingCart className="w-3.5 h-3.5 text-slate-400" />
           <span className="text-xs font-medium text-slate-500">Rekomendasi Produk</span>
@@ -60,6 +175,57 @@ export function EducationCard({ session, onStatusChange }: Props) {
           />
         ))}
       </div>
+
+      {/* Photo display or upload */}
+      {session.photo ? (
+        <div className="mt-1 px-4 pb-4">
+          <div className="relative rounded-xl overflow-hidden border border-slate-100 shadow-sm group">
+            <img
+              src={session.photo}
+              alt="Foto Bukti Edukasi"
+              className="w-full h-40 object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-3">
+              <div className="flex items-center gap-1.5 text-white">
+                <MapPin className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />
+                <span className="text-[10px] font-medium truncate">{session.photo_location || 'Lokasi tidak terdeteksi'}</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-white/80 mt-1">
+                <Calendar className="w-3.5 h-3.5 text-blue-300 flex-shrink-0" />
+                <span className="text-[10px] font-medium">{formatDateTime(session.photo_timestamp || session.created_at)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="px-4 pb-4">
+          <button
+            onClick={handleUploadClick}
+            disabled={uploading}
+            className="w-full py-2.5 rounded-xl border border-dashed border-green-200 bg-green-50/30 hover:bg-green-50 text-green-600 hover:text-green-700 text-xs font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.99] disabled:opacity-60"
+          >
+            {uploading ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                Memproses Foto & GPS...
+              </>
+            ) : (
+              <>
+                <Camera className="w-3.5 h-3.5" />
+                Upload Foto Bukti (Kamera/Upload)
+              </>
+            )}
+          </button>
+          {error && <p className="text-[10px] text-red-500 mt-1 text-center font-medium">{error}</p>}
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="hidden"
+          />
+        </div>
+      )}
     </div>
   )
 }
